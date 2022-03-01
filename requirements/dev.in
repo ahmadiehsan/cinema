@@ -1,0 +1,5 @@
+-r base.in
+
+black==22.1.0
+pip-tools==6.4.0
+pre-commit==2.16.0
