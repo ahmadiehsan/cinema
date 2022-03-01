@@ -34,7 +34,7 @@ npm install
 
 ```
 python manage.py migrate
-python manage.py initialize
+python manage.py import_fake_data
 ```
 
 6. run server

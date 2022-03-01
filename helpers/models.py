@@ -9,9 +9,13 @@ class BaseModel(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, verbose_name=_('Create Time'))
     modify_time = models.DateTimeField(auto_now=True, verbose_name=_('Modify Time'))
 
-    auto_cols = ['create_time', 'modify_time']
+    auto_cols = ('create_time', 'modify_time')
 
     class Meta:
         ordering = ('-create_time',)
         get_latest_by = ('create_time',)
         abstract = True
+
+    def save(self, **kwargs):
+        self.full_clean()
+        return super().save(**kwargs)

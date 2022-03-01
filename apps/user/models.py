@@ -9,8 +9,8 @@ class User(AbstractUser):
         FEMALE = 'F', _('Female')
         NON_BINARY = 'N', _('Non-Binary')
 
-    birthdate = models.DateField(_('Birthdate'), null=True)
     gender = models.CharField(_('Gender'), max_length=1, choices=Gender.choices, null=True)
+    birthdate = models.DateField(_('Birthdate'), null=True)
 
 
 # Make unique user's email

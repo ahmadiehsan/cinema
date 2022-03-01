@@ -48,6 +48,8 @@ pathspec==0.9.0
     # via black
 pep517==0.12.0
     # via pip-tools
+pillow==8.4.0
+    # via -r requirements/base.in
 pip-tools==6.4.0
     # via -r requirements/dev.in
 platformdirs==2.4.0

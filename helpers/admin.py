@@ -19,9 +19,7 @@ class BaseAdmin(admin.ModelAdmin):
         fieldsets += (
             (
                 _('Other Data'),
-                {
-                    'fields': BaseModel.auto_cols
-                },
+                {'fields': BaseModel.auto_cols},
             ),
         )
         return fieldsets

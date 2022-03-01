@@ -1,0 +1,29 @@
+{% extends 'main_app/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Rooms" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col col-xl-8 offset-xl-2">
+            {% trans "Rooms" as title %}
+            {% include 'main_app/_page_title.html' with title=title %}
+
+            <div class="row">
+                {% for room in room_list %}
+                    <div class="col-md-6 mb-4">
+                        {% include "shop/_room_item.html" with name=room.name desc=room.description %}
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-primary">
+                            {% trans "Ther is no room here! Pleas run 'python manage.py import_fake_data'" %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

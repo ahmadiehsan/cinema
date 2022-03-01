@@ -1,20 +1,38 @@
-{% extends 'user/auth_base.html' %}
+{% extends 'main_app/base.html' %}
 {% load static widget_tweaks i18n %}
 
 {% block title %}{% trans "Sign In" %}{% endblock %}
 
-{% block tab_content %}
-    <form
-            method="post"
-            action="{% url 'user:sign-in' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
-    >
-        {{ form.non_field_errors }}
-        {% csrf_token %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                {% trans "Sign In" as title %}
+                {% trans "Home" as back_title %}
+                {% url "shop:room-list" as back_url %}
+                {% include 'main_app/_page_title.html' with title=title back_title=back_title back_url=back_url %}
 
-        {% for field in form %}
-            {% include 'main_app/_input_horizontal.html' with field=field %}
-        {% endfor %}
+                <form method="post"
+                      action="{% url 'user:sign-in' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+                    {{ form.non_field_errors }}
+                    {% csrf_token %}
 
-        <button type="submit" class="btn btn-danger">{% trans "Sign In" %}</button>
-    </form>
+                    {% for field in form %}
+                        {% include 'main_app/_input_horizontal.html' with field=field %}
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary">
+                        {% trans "Sign In" %}
+                    </button>
+
+                    <span class="d-inline-block ms-2">
+                        {% trans "Not registred yet?" %}
+                        <a href="{% url "user:sign-up" %}">
+                            {% trans "sign up" %}
+                        </a>
+                    </span>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

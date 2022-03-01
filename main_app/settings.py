@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'main_app',
     'apps.user',
+    'apps.shop',
 
     'django_node_assets',
     'widget_tweaks',
@@ -135,7 +136,10 @@ STATICFILES_FINDERS = [
 ]
 NODE_PACKAGE_JSON = BASE_DIR / 'package.json'
 NODE_MODULES_ROOT = BASE_DIR / 'node_modules'
-NODE_PACKAGE_MANAGER_EXECUTABLE = get_env_value('NODE_PACKAGE_MANAGER_EXECUTABLE')
+
+# Dynamic files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
