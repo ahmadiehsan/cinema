@@ -11,8 +11,8 @@
 
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static '@fortawesome/fontawesome-free/css/all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/forms.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'main_app/css/../../static/main_app/css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'main_app/css/../../static/main_app/css/style.css' %}">
 
     {% block css %}{% endblock %}
 
@@ -20,7 +20,7 @@
 </head>
 <body class="pb-5">
 
-{% include 'core/_navbar.html' %}
+{% include 'main_app/_navbar.html' %}
 
 {% block content %}{% endblock %}
 

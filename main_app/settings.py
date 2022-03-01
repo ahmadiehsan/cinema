@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'apps.core',
+    'main_app',
     'apps.user',
 
     'django_node_assets',
@@ -125,7 +125,7 @@ CACHES = {
 # Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'apps' / 'core' / 'static',
+    BASE_DIR / 'main_app' / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_FINDERS = [

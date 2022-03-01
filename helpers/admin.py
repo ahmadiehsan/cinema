@@ -20,10 +20,7 @@ class BaseAdmin(admin.ModelAdmin):
             (
                 _('Other Data'),
                 {
-                    'fields': (
-                        'create_time',
-                        'modify_time',
-                    )
+                    'fields': BaseModel.auto_cols
                 },
             ),
         )
@@ -31,12 +28,12 @@ class BaseAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
-        return readonly_fields + ('create_time', 'modify_time')
+        return readonly_fields + BaseModel.auto_cols
 
     def get_list_filter(self, request):
         list_filter = super().get_list_filter(request)
-        return list_filter + ('create_time', 'modify_time')
+        return list_filter + BaseModel.auto_cols
 
     def get_list_display(self, request):
         list_display = super().get_list_display(request)
-        return list_display + ('modify_time',)
+        return list_display + BaseModel.auto_cols

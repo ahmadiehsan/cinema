@@ -1,11 +1,11 @@
-{% extends 'core/base.html' %}
+{% extends 'main_app/base.html' %}
 {% load static i18n %}
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 
 {% block content %}
     <div class="container">
-        {% include 'core/_messages.html' with messages=messages %}
+        {% include 'main_app/_messages.html' with messages=messages %}
 
         <div class="row">
             <div class="col-xl-8 mb-4 d-flex align-items-stretch">
@@ -16,7 +16,7 @@
                             {% csrf_token %}
 
                             {% for field in profile_form %}
-                                {% include 'core/_input_horizontal.html' with field=field %}
+                                {% include 'main_app/_input_horizontal.html' with field=field %}
                             {% endfor %}
 
                             <input type="hidden" name="form_type" value="profile">
@@ -36,7 +36,7 @@
                             {% csrf_token %}
 
                             {% for field in change_password_form %}
-                                {% include 'core/_input_vertical.html' with field=field %}
+                                {% include 'main_app/_input_vertical.html' with field=field %}
                             {% endfor %}
 
                             <input type="hidden" name="form_type" value="change_password">
