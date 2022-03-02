@@ -11,6 +11,8 @@
             {% trans "Rooms" as title %}
             {% include 'main_app/_page_title.html' with title=title %}
 
+{#            TODO (ehsan) add banner and say to them that projct timezone is UTC#}
+
             <div class="row">
                 {% for room in room_list %}
                     <div class="col-md-6 mb-4">
