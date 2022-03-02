@@ -13,7 +13,7 @@
     </a>
     <div class="card-body">
         <p class="card-text">
-            {{ movie.description|summary:35 }}
+            {{ movie.title }}
         </p>
 
         <a href="{% url 'shop:room-movie-release-list' room_id=room.id movie_id=movie.id %}" class="btn btn-sm btn-primary">

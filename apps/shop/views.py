@@ -23,7 +23,7 @@ class RoomMovieListView(ListView):
 
         self.room = get_object_or_404(Room, id=room_id)
 
-        now = timezone.now()
+        now = timezone.localtime()
         return (
             Movie.objects.filter(rooms=self.room, release__date__gte=now.date())
             .annotate(
@@ -52,7 +52,7 @@ class RoomMovieReleaseListView(ListView):
 
         self.movie = get_object_or_404(Movie, id=movie_id)
 
-        now = timezone.now()
+        now = timezone.localtime()
         # TODO (ehsan) fix below query
         return Release.objects.filter(room_id=room_id, movie=self.movie, date__gte=now.date()).annotate(
             is_available=Case(
@@ -74,7 +74,7 @@ class ReleaseDetailView(LoginRequiredMixin, DetailView):
     pk_url_kwarg = 'release_id'
 
     def get_queryset(self):
-        now = timezone.now()
+        now = timezone.localtime()
         return Release.objects.filter(Q(date__gt=now.date()) | Q(date=now.date(), start_at__gte=now)).select_related(
             'room', 'movie'
         )

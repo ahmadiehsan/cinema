@@ -62,11 +62,12 @@ class Movie(BaseModel):
 
 
 class Release(BaseModel):
+    # TODO (ehsan) run makemessages
     room = models.ForeignKey(Room, verbose_name=_('Room'), on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, verbose_name=_('Movie'), on_delete=models.CASCADE)
-    date = models.DateField(verbose_name=_('Release Date'), db_index=True)
-    start_at = models.TimeField(verbose_name=_('Release Start At'), db_index=True)
-    end_at = models.TimeField(verbose_name=_('Release End At'), db_index=True)
+    date = models.DateField(verbose_name=_('Date'), db_index=True)
+    start_at = models.TimeField(verbose_name=_('Start At'), db_index=True)
+    end_at = models.TimeField(verbose_name=_('End At'), db_index=True)
 
     def __str__(self):
         return f'Release with ID: {self.id}'
@@ -76,7 +77,7 @@ class Release(BaseModel):
             raise ValidationError('The end time must be after the start time')
 
         # TODO (ehsan) check below code still work?
-        time_overlap_condition = Movie.objects.filter(date=self.date).filter(
+        time_overlap_condition = Release.objects.filter(date=self.date, room=self.room).filter(
             Q(start_at__lte=self.start_at, end_at__gte=self.start_at)
             | Q(start_at__lte=self.end_at, end_at__gte=self.end_at)
             | Q(start_at__gte=self.start_at, end_at__lte=self.end_at),
