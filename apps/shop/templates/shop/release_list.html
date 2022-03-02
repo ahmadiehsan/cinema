@@ -1,0 +1,69 @@
+{% extends 'main_app/base.html' %}
+{% load i18n custom %}
+
+{% block title %}
+    {{ movie.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col col-xl-8 offset-xl-2">
+            {% trans "Rooms" as back_title %}
+            {% url 'shop:room-list' as back_url %}
+            {% include 'main_app/_page_title.html' with title=movie.title back_url=back_url back_title=back_title %}
+
+            <div class="row mb-5">
+                <div class="col-sm-3 d-none d-sm-block">
+                    <img src="{% settings_value 'MEDIA_URL' %}{{ movie.poster }}"
+                         class="card-img-top"
+                         alt="{{ movie.title }}">
+                </div>
+                <div class="col-sm-9">
+                    <h5>{% trans "Movie Description:" %}</h5>
+                    <p>{{ movie.description }}</p>
+                </div>
+            </div>
+
+            <hr>
+            <h5>{% trans "Movie Releases:" %}</h5>
+
+            {% if release_list %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Start at" %}</th>
+                        <th>{% trans "End at" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for release in release_list %}
+                        <tr class="{% if not release.is_available %}release-not-available{% endif %}">
+                            <td>{{ forloop.counter }}</td>
+                            <td class="text-primary">{{ release.date }}</td>
+                            <td>{{ release.start_at }}</td>
+                            <td>{{ release.end_at }}</td>
+                            <td>
+                                {% if release.is_available %}
+                                    <a href="{% url 'shop:release-detail' release_id=release.id %}"
+                                       class="btn btn-sm btn-primary">
+                                        {% trans "Select seat" %}
+                                    </a>
+                                {% else %}
+                                    <p>{% trans "Not available" %}</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-primary">
+                    {% trans "Ther is no release here! Pleas remove DB and rerun 'python manage.py import_fake_data'" %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'main_app/base.html' %}
+{% load i18n custom %}
+
+{% block title %}
+    {% trans "Select Seat" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col col-xl-8 offset-xl-2">
+            {% trans "Rooms" as back_title %}
+            {% url 'shop:room-list' as back_url %}
+            {% include 'main_app/_page_title.html' with title=release.movie.title back_url=back_url back_title=back_title %}
+
+            <div class="alert alert-primary">
+                {% with release_date=release.date release_start_at=release.start_at %}
+                    {% blocktrans %}
+                        You are choosing a seat for {{ release_date }} - {{ release_start_at }}
+                    {% endblocktrans %}
+                {% endwith %}
+            </div>
+
+            <div class="mb-3">
+                <h6>{% trans "Help:" %}</h6>
+                <p>
+                    <span class="px-2 me-2" style="background: #bbbbbb"></span>
+                    {% trans "Empty seates" %}
+                </p>
+                <p>
+                    <span class="px-2 me-2" style="background: #cb5a5a"></span>
+                    {% trans "Reserved seates" %}
+                </p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="position-relative">
+                    {% for seat in seats %}
+                        {% if seat.is_reserved %}
+                            <div
+                                    class="seat is-reserved"
+                                    style="top: {{ seat.row|subtract:1|multiply:50 }}px; left: {{ seat.number|subtract:1|multiply:50 }}px;"
+                            >
+                                {{ seat.row }}{{ seat.number }}
+                            </div>
+                        {% else %}
+                            <input
+                                    class="btn-check"
+                                    value="{{ seat.id }}"
+                                    type="radio"
+                                    name="seat_id"
+                                    id="{{ seat.id }}"
+                                    style="top: {{ seat.row|subtract:1|multiply:50 }}px; left: {{ seat.number|subtract:1|multiply:50 }}px;"
+                            >
+                            <label
+                                    class="seat"
+                                    for="{{ seat.id }}"
+                                    style="top: {{ seat.row|subtract:1|multiply:50 }}px; left: {{ seat.number|subtract:1|multiply:50 }}px;"
+                            >
+                                {{ seat.row }}{{ seat.number }}
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('input[type=radio]').on('change', function () {
+            $(this).closest("form").submit();
+        });
+    </script>
+{% endblock %}

@@ -19,7 +19,7 @@ source venv/bin/activate
 3. local settings
 
 ```
-cp main_app/.env.example main_app/.evn
+cp main_app/.env.example main_app/.env
 vim main_app/.env
 ```
 

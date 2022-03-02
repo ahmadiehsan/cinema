@@ -14,7 +14,7 @@
             <div class="row">
                 {% for room in room_list %}
                     <div class="col-md-6 mb-4">
-                        {% include "shop/_room_item.html" with name=room.name desc=room.description %}
+                        {% include "shop/_room_item.html" with room=room %}
                     </div>
                 {% empty %}
                     <div class="col-12">

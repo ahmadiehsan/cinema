@@ -2,12 +2,12 @@ import datetime
 import os
 
 from django.contrib.auth import get_user_model
+from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
-from django.core.files import File
 
-from apps.shop.models import Room, Seat, Movie
+from apps.shop.models import Room, Seat, Movie, Release
 
 User = get_user_model()
 
@@ -17,21 +17,44 @@ class Command(BaseCommand):
 
     rooms = [
         Room(
-            name='Red',
-            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            name='One',
+            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+            color=Room.Color.RED
         ),
         Room(
-            name='Blue',
-            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            name='Two',
+            description="Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada proin. Vehicula ipsum a arcu cursus vitae congue mauris rhoncus. Nisi vitae suscipit tellus mauris a diam maecenas. Gravida dictum fusce ut placerat orci nulla pellentesque. Quam pellentesque nec nam aliquam. Vel pharetra vel turpis nunc eget. Fermentum posuere urna nec tincidunt. Tortor condimentum lacinia quis vel eros donec ac. Ac orci phasellus egestas tellus rutrum.",
+            color=Room.Color.BLUE
         ),
         Room(
-            name='Green',
-            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            name='Three',
+            description="Vitae nunc sed velit dignissim sodales ut eu. Nunc scelerisque viverra mauris in. Mi tempus imperdiet nulla malesuada pellentesque elit eget.",
+            color=Room.Color.GREEN
         ),
         Room(
-            name='Yellow',
-            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            name='Four',
+            description="Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare. Amet dictum sit amet justo donec enim diam vulputate. Dignissim suspendisse in est ante in nibh mauris cursus mattis. Quis lectus nulla at volutpat diam. At imperdiet dui accumsan sit amet nulla facilisi morbi tempus.",
+            color=Room.Color.YELLOW
         )
+    ]
+
+    movies = [
+        Movie(
+            title='The Shawshank Redemption (1994)',
+            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        ),
+        Movie(
+            title='The Godfather (1972)',
+            description="Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada proin. Vehicula ipsum a arcu cursus vitae congue mauris rhoncus. Nisi vitae suscipit tellus mauris a diam maecenas. Gravida dictum fusce ut placerat orci nulla pellentesque. Quam pellentesque nec nam aliquam. Vel pharetra vel turpis nunc eget. Fermentum posuere urna nec tincidunt. Tortor condimentum lacinia quis vel eros donec ac. Ac orci phasellus egestas tellus rutrum.",
+        ),
+        Movie(
+            title='The Dark Knight (2008)',
+            description="Vitae nunc sed velit dignissim sodales ut eu. Nunc scelerisque viverra mauris in. Mi tempus imperdiet nulla malesuada pellentesque elit eget.",
+        ),
+        Movie(
+            title='12 Angry Men (1957)',
+            description="Mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare. Amet dictum sit amet justo donec enim diam vulputate. Dignissim suspendisse in est ante in nibh mauris cursus mattis. Quis lectus nulla at volutpat diam. At imperdiet dui accumsan sit amet nulla facilisi morbi tempus.",
+        ),
     ]
 
     def handle(self, *args, **options):
@@ -40,8 +63,7 @@ class Command(BaseCommand):
             self._generate_rooms()
             self._generate_seates()
             self._generate_movies()
-
-        # TODO (ehsan) import fake data
+            self._generate_releases()
 
         print('Fake data imported!')
 
@@ -56,7 +78,7 @@ class Command(BaseCommand):
 
     def _generate_seates(self):
         seats = [
-            # Room Red
+            # Room One
             Seat(room=self.rooms[0], row=1, number=1),
             Seat(room=self.rooms[0], row=1, number=2),
             Seat(room=self.rooms[0], row=1, number=3),
@@ -77,7 +99,7 @@ class Command(BaseCommand):
             Seat(room=self.rooms[0], row=3, number=2),
             Seat(room=self.rooms[0], row=3, number=3),
             Seat(room=self.rooms[0], row=3, number=4),
-            # Room Blue
+            # Room Two
             Seat(room=self.rooms[1], row=1, number=1),
             Seat(room=self.rooms[1], row=1, number=2),
             Seat(room=self.rooms[1], row=1, number=3),
@@ -90,7 +112,7 @@ class Command(BaseCommand):
             Seat(room=self.rooms[1], row=4, number=1),
             Seat(room=self.rooms[1], row=4, number=2),
             Seat(room=self.rooms[1], row=4, number=3),
-            # Room Green
+            # Room Three
             Seat(room=self.rooms[2], row=1, number=1),
             Seat(room=self.rooms[2], row=1, number=2),
             Seat(room=self.rooms[2], row=2, number=1),
@@ -99,7 +121,7 @@ class Command(BaseCommand):
             Seat(room=self.rooms[2], row=3, number=3),
             Seat(room=self.rooms[2], row=4, number=2),
             Seat(room=self.rooms[2], row=4, number=3),
-            # Room Yellow
+            # Room Four
             Seat(room=self.rooms[3], row=1, number=1),
             Seat(room=self.rooms[3], row=1, number=2),
             Seat(room=self.rooms[3], row=1, number=3),
@@ -138,145 +160,11 @@ class Command(BaseCommand):
                 'file': File(open(os.path.join(poster_dir, '4.jpg'), 'rb')),
             },
         ]
-        movies = [
-            # Room Red
-            Movie(
-                room=self.rooms[0],
-                title='The Shawshank Redemption (1994)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(8, 0, 0),
-                release_end_at=datetime.time(11, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[0],
-                title='The Godfather (1972)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(12, 0, 0),
-                release_end_at=datetime.time(15, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[0],
-                title='The Dark Knight (2008)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(16, 0, 0),
-                release_end_at=datetime.time(19, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[0],
-                title='12 Angry Men (1957)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(20, 0, 0),
-                release_end_at=datetime.time(23, 0, 0),
-            ),
-            # Room Blue
-            Movie(
-                room=self.rooms[1],
-                title='The Shawshank Redemption (1994)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(8, 0, 0),
-                release_end_at=datetime.time(11, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[1],
-                title='The Godfather (1972)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(12, 0, 0),
-                release_end_at=datetime.time(15, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[1],
-                title='The Dark Knight (2008)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(16, 0, 0),
-                release_end_at=datetime.time(19, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[1],
-                title='12 Angry Men (1957)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(20, 0, 0),
-                release_end_at=datetime.time(23, 0, 0),
-            ),
-            # Room Green
-            Movie(
-                room=self.rooms[2],
-                title='The Shawshank Redemption (1994)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(8, 0, 0),
-                release_end_at=datetime.time(11, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[2],
-                title='The Godfather (1972)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(12, 0, 0),
-                release_end_at=datetime.time(15, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[2],
-                title='The Dark Knight (2008)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(16, 0, 0),
-                release_end_at=datetime.time(19, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[2],
-                title='12 Angry Men (1957)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(20, 0, 0),
-                release_end_at=datetime.time(23, 0, 0),
-            ),
-            # Room Yellow
-            Movie(
-                room=self.rooms[3],
-                title='The Shawshank Redemption (1994)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(8, 0, 0),
-                release_end_at=datetime.time(11, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[3],
-                title='The Godfather (1972)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(12, 0, 0),
-                release_end_at=datetime.time(15, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[3],
-                title='The Dark Knight (2008)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(16, 0, 0),
-                release_end_at=datetime.time(19, 0, 0),
-            ),
-            Movie(
-                room=self.rooms[3],
-                title='12 Angry Men (1957)',
-                description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-                release_date=timezone.now().date(),
-                release_start_at=datetime.time(20, 0, 0),
-                release_end_at=datetime.time(23, 0, 0),
-            ),
-        ]
 
         poster_index = 0
-        for movie in movies:
+        for movie in self.movies:
             movie.poster.save(
-                f"{movie.room.name}__{posters[poster_index]['name']}",
+                movie.title,
                 posters[poster_index]['file']
             )
             movie.save()
@@ -285,3 +173,153 @@ class Command(BaseCommand):
                 poster_index = 0
             else:
                 poster_index += 1
+
+    def _generate_releases(self):
+        releases = [
+            # Room One
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[0],
+                date=timezone.now().date(),
+                start_at=datetime.time(8, 0, 0),
+                end_at=datetime.time(11, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[1],
+                date=timezone.now().date(),
+                start_at=datetime.time(12, 0, 0),
+                end_at=datetime.time(15, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[2],
+                date=timezone.now().date(),
+                start_at=datetime.time(16, 0, 0),
+                end_at=datetime.time(19, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[3],
+                date=timezone.now().date(),
+                start_at=datetime.time(20, 0, 0),
+                end_at=datetime.time(23, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[0],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(8, 0, 0),
+                end_at=datetime.time(11, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[1],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(12, 0, 0),
+                end_at=datetime.time(15, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[2],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(16, 0, 0),
+                end_at=datetime.time(19, 0, 0),
+            ),
+            Release(
+                room=self.rooms[0],
+                movie=self.movies[3],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(20, 0, 0),
+                end_at=datetime.time(23, 0, 0),
+            ),
+            # Room Two
+            Release(
+                room=self.rooms[1],
+                movie=self.movies[1],
+                date=timezone.now().date(),
+                start_at=datetime.time(12, 0, 0),
+                end_at=datetime.time(15, 0, 0),
+            ),
+            Release(
+                room=self.rooms[1],
+                movie=self.movies[2],
+                date=timezone.now().date(),
+                start_at=datetime.time(16, 0, 0),
+                end_at=datetime.time(19, 0, 0),
+            ),
+            Release(
+                room=self.rooms[1],
+                movie=self.movies[3],
+                date=timezone.now().date(),
+                start_at=datetime.time(20, 0, 0),
+                end_at=datetime.time(23, 0, 0),
+            ),
+            Release(
+                room=self.rooms[1],
+                movie=self.movies[1],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(12, 0, 0),
+                end_at=datetime.time(15, 0, 0),
+            ),
+            Release(
+                room=self.rooms[1],
+                movie=self.movies[2],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(16, 0, 0),
+                end_at=datetime.time(19, 0, 0),
+            ),
+            Release(
+                room=self.rooms[1],
+                movie=self.movies[3],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(20, 0, 0),
+                end_at=datetime.time(23, 0, 0),
+            ),
+            # Room Three
+            Release(
+                room=self.rooms[2],
+                movie=self.movies[0],
+                date=timezone.now().date(),
+                start_at=datetime.time(8, 0, 0),
+                end_at=datetime.time(11, 0, 0),
+            ),
+            Release(
+                room=self.rooms[2],
+                movie=self.movies[3],
+                date=timezone.now().date(),
+                start_at=datetime.time(20, 0, 0),
+                end_at=datetime.time(23, 0, 0),
+            ),
+            Release(
+                room=self.rooms[2],
+                movie=self.movies[0],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(8, 0, 0),
+                end_at=datetime.time(11, 0, 0),
+            ),
+            Release(
+                room=self.rooms[2],
+                movie=self.movies[3],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(20, 0, 0),
+                end_at=datetime.time(23, 0, 0),
+            ),
+            # Room Four
+            Release(
+                room=self.rooms[3],
+                movie=self.movies[2],
+                date=timezone.now().date(),
+                start_at=datetime.time(8, 0, 0),
+                end_at=datetime.time(11, 0, 0),
+            ),
+            Release(
+                room=self.rooms[3],
+                movie=self.movies[2],
+                date=timezone.now().date() + datetime.timedelta(1),
+                start_at=datetime.time(8, 0, 0),
+                end_at=datetime.time(11, 0, 0),
+            ),
+        ]
+
+        Release.objects.bulk_create(releases)

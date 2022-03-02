@@ -1,0 +1,38 @@
+{% extends 'main_app/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {{ room.name }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col col-xl-8 offset-xl-2">
+            {% trans "Rooms" as back_title %}
+            {% url 'shop:room-list' as back_url %}
+            {% include 'main_app/_page_title.html' with title=room.name back_url=back_url back_title=back_title %}
+
+            <div class="mb-5">
+                <h5>{% trans "Room Description:" %}</h5>
+                <p>{{ room.description }}</p>
+            </div>
+
+            <hr>
+            <div class="row">
+                <h5>{% trans "Room Movies:" %}</h5>
+
+                {% for movie in movie_list %}
+                    <div class="col-md-3 mb-4">
+                        {% include 'shop/_movie_item.html' with movie=movie room=room %}
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-primary">
+                            {% trans "Ther is no movie here! Pleas remove DB and rerun 'python manage.py import_fake_data'" %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

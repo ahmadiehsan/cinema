@@ -1,3 +1,41 @@
 .text-justify {
     text-align: justify !important;
 }
+
+.movie-not-available {
+    position: relative;
+}
+
+.movie-not-available::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.release-not-available {
+    opacity: 0.2;
+}
+
+.seat {
+    position: absolute;
+    margin: 5px;
+    width: 35px;
+    height: 25px;
+    background: #dddddd;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    cursor: pointer;
+}
+
+.seat:hover {
+    background: #bbbbbb;
+}
+
+.seat.is-reserved {
+    background: #cb5a5a;
+    cursor: not-allowed;
+}

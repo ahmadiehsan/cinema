@@ -1,11 +1,17 @@
-{% load i18n %}
+{% load i18n custom %}
 
 <div class="card">
+    <div class="card-header">
+        {{ room.name }}
+    </div>
     <div class="card-body">
-        <h5 class="card-title">{{ name }}</h5>
-        <p class="card-text">{{ desc }}</p>
-        <a href="{{ url }}" class="btn btn-primary">
-            {% trans "Go to Movies" %}
+        <p class="card-text">
+            {{ room.description|summary:130 }}
+        </p>
+
+        <a href="{% url 'shop:room-movie-list' room_id=room.id %}"
+           class="btn btn-sm btn-{{ room.color|room_color_map }}">
+            {% trans "Go to Room Movies" %}
         </a>
     </div>
 </div>
