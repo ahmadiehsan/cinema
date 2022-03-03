@@ -37,7 +37,13 @@ def sign_up_view(request):
             user.set_password(user.password)
             user.save()
             login(request, user)
-            return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+
+            if request.GET.get('next'):
+                redirect_url = request.GET['next']
+            else:
+                redirect_url = settings.LOGIN_REDIRECT_URL
+
+            return HttpResponseRedirect(redirect_url)
 
     return render(request, 'user/sign_up.html', {'form': form})
 

@@ -27,7 +27,7 @@
 
                     <span class="d-inline-block ms-2">
                         {% trans "Not registred yet?" %}
-                        <a href="{% url "user:sign-up" %}">
+                        <a href="{% url "user:sign-up" %}?{{ request.META.QUERY_STRING }}">
                             {% trans "sign up" %}
                         </a>
                     </span>

@@ -15,6 +15,8 @@ User = get_user_model()
 class Command(BaseCommand):
     help = 'Import fake data'
 
+    output_message_data = []
+
     rooms = [
         Room(
             name='One',
@@ -64,13 +66,24 @@ class Command(BaseCommand):
             self._generate_seates()
             self._generate_movies()
             self._generate_releases()
+            self._print_output()
 
-        print('Fake data imported!')
+    def _generate_superuser(self):
+        password = User.objects.make_random_password()
+        username = 'admin'
+        email = 'admin@example.com'
 
-    @staticmethod
-    def _generate_superuser():
+        self.output_message_data.append({
+            'title': 'Login Credentials:',
+            'data': {
+                'username': username,
+                'email': email,
+                'password': password,
+            }
+        })
+
         User.objects.create_user(
-            username='admin', email='admin@example.com', password='asdfqwer', is_staff=True, is_superuser=True
+            username=username, email=email, password=password, is_staff=True, is_superuser=True
         )
 
     def _generate_rooms(self):
@@ -323,3 +336,13 @@ class Command(BaseCommand):
         ]
 
         Release.objects.bulk_create(releases)
+
+    def _print_output(self):
+        print('=========================')
+        print('Fake data imported successfully!')
+        print('-------------------------')
+        for output in self.output_message_data:
+            print(f"\n# {output['title']}")
+            for item_key, item_value in output['data'].items():
+                print(f'{item_key}: {item_value}')
+        print('=========================')

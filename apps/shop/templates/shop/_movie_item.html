@@ -1,13 +1,6 @@
 {% load i18n custom %}
 
-<div
-        class="card {% if not movie.has_available_release %}movie-not-available{% endif %}"
-        {% if not movie.has_available_release %}
-        data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        title="{% trans 'No release available!' %}"
-        {% endif %}
->
+<div class="card">
     <a href="{% url 'shop:room-movie-release-list' room_id=room.id movie_id=movie.id %}">
         <img src="{% settings_value 'MEDIA_URL' %}{{ movie.poster }}" class="card-img-top" alt="{{ movie.title }}">
     </a>

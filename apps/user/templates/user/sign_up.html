@@ -12,7 +12,7 @@
                 {% url "shop:room-list" as back_url %}
                 {% include 'main_app/_page_title.html' with title=title back_title=back_title back_url=back_url %}
 
-                <form method="post" action="{% url 'user:sign-up' %}">
+                <form method="post" action="{% url 'user:sign-up' %}?{{ request.META.QUERY_STRING }}">
                     {{ form.non_field_errors }}
                     {% csrf_token %}
 
@@ -26,7 +26,7 @@
 
                     <span class="d-inline-block ms-2">
                         {% trans "or" %}
-                        <a href="{% url "user:sign-in" %}">
+                        <a href="{% url "user:sign-in" %}?{{ request.META.QUERY_STRING }}">
                             {% trans "sign in" %}
                         </a>
                     </span>

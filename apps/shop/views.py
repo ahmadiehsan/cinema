@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Case, When, Value, BooleanField, Q
 from django.http import HttpResponseRedirect
@@ -24,18 +26,10 @@ class RoomMovieListView(ListView):
         self.room = get_object_or_404(Room, id=room_id)
 
         now = timezone.localtime()
-        return (
-            Movie.objects.filter(rooms=self.room, release__date__gte=now.date())
-            .annotate(
-                has_available_release=Case(
-                    When(release__date__gt=now.date(), then=Value(True)),
-                    When(release__date=now.date(), release__start_at__gte=now, then=Value(True)),
-                    default=Value(False),
-                    output_field=BooleanField(),
-                )
-            )
-            .distinct('id')
-        )
+        return Movie.objects.filter(
+            Q(rooms=self.room, release__date__gt=now.date())
+            | Q(rooms=self.room, release__date=now.date(), release__start_at__gt=now)
+        ).distinct('id')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -53,7 +47,6 @@ class RoomMovieReleaseListView(ListView):
         self.movie = get_object_or_404(Movie, id=movie_id)
 
         now = timezone.localtime()
-        # TODO (ehsan) fix below query
         return Release.objects.filter(room_id=room_id, movie=self.movie, date__gte=now.date()).annotate(
             is_available=Case(
                 When(date__gt=now.date(), then=Value(True)),
@@ -82,7 +75,7 @@ class ReleaseDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['seats'] = Seat.objects.filter(room=self.object.room,).annotate(
+        context['seats'] = Seat.objects.filter(room=self.object.room).annotate(
             is_reserved=Case(
                 When(reserves__release=self.object, then=Value(True)), default=Value(False), output_field=BooleanField()
             )
@@ -94,13 +87,20 @@ class ReleaseDetailView(LoginRequiredMixin, DetailView):
         seat_id = request.POST['seat_id']
         form = ReserveForm(data={'seat_id': seat_id, 'release_id': release_id})
 
+        user = self.request.user
         if form.is_valid():
             reserve = Reserve()
             reserve.seat_id = seat_id
             reserve.release_id = release_id
-            reserve.user = self.request.user
+            reserve.user = user
             reserve.save()
-
-        # TODO (ehsan) say why you ignored error handling
+        else:
+            # Because the user does not directly fill the fields,
+            # there is no need to display an error if there is a problem with the submitted information.
+            logging.error(
+                'Reserving encountered a problem. release_id: {}, seat_id: {}, user_id: {}'.format(
+                    release_id, seat_id, user.id
+                )
+            )
 
         return HttpResponseRedirect(reverse('shop:release-detail', kwargs={'release_id': release_id}))

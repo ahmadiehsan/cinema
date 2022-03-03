@@ -25,6 +25,7 @@ class MovieAdmin(BaseAdmin):
 @register(Release)
 class ReleaseAdmin(BaseAdmin):
     list_display = ('movie', 'room', 'date', 'start_at', 'end_at')
+    raw_id_fields = ('room', 'movie')
 
 
 @register(Reserve)

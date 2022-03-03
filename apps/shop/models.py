@@ -62,7 +62,6 @@ class Movie(BaseModel):
 
 
 class Release(BaseModel):
-    # TODO (ehsan) run makemessages
     room = models.ForeignKey(Room, verbose_name=_('Room'), on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, verbose_name=_('Movie'), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_('Date'), db_index=True)
@@ -76,7 +75,6 @@ class Release(BaseModel):
         if not self.start_at < self.end_at:
             raise ValidationError('The end time must be after the start time')
 
-        # TODO (ehsan) check below code still work?
         time_overlap_condition = Release.objects.filter(date=self.date, room=self.room).filter(
             Q(start_at__lte=self.start_at, end_at__gte=self.start_at)
             | Q(start_at__lte=self.end_at, end_at__gte=self.end_at)
@@ -86,7 +84,7 @@ class Release(BaseModel):
             time_overlap_condition.exclude(id=self.id)
 
         if time_overlap_condition.exists():
-            raise ValidationError('Another release is available at this time range')
+            raise ValidationError('Another release is available at this time range in this room')
 
     class Meta:
         verbose_name = _('Release')

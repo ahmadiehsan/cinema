@@ -2,20 +2,6 @@
     text-align: justify !important;
 }
 
-.movie-not-available {
-    position: relative;
-}
-
-.movie-not-available::before {
-    content: "";
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-}
-
 .release-not-available {
     opacity: 0.2;
 }

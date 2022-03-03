@@ -37,15 +37,12 @@ python manage.py migrate
 python manage.py import_fake_data
 ```
 
+Tip: Remember the login information shown
+
 6. run server
 
 ```
 python manage.py runserver
 ```
 
-7. login credential
-```
-username: admin
-email: admin@example.com
-password: asdfqwer
-```
+7. Login with the login information

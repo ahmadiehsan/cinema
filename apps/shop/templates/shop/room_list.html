@@ -11,7 +11,12 @@
             {% trans "Rooms" as title %}
             {% include 'main_app/_page_title.html' with title=title %}
 
-{#            TODO (ehsan) add banner and say to them that projct timezone is UTC#}
+            <div class="alert alert-primary">
+                <h4 class="alert-heading">
+                    {% trans "Imprtant Note" %}
+                </h4>
+                {% trans "All times of the system are set based on UTC timezone and are not in line with the timezone of your country. You can change the timezone from the settings.py file if you wish." %}
+            </div>
 
             <div class="row">
                 {% for room in room_list %}
